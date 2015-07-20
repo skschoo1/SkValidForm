@@ -1,0 +1,84 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+	<title>SkValidForm - 一行代码搞定整站的表单验证！- Jquery表单验证插件</title>
+	<meta name="Keywords" content="SkValidForm,表单验证,jq表单验证,表单验证插件" />
+	<meta name="description" content="一行代码搞定整站的表单验证！" />
+</head>
+<style>
+*{padding: 0;margin: 0;}
+html,body{width: 100%;background: #f9f9f9;font-family:"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
+.skValidForm {width: 320px;height: 525px;margin: auto auto;}
+/* .tipsStyle1 must */
+.skValidForm .tipsStyle1 {width: 320px;height: 525px;background: #f9f9f9;}
+.skValidForm .tipsStyle1 p {position: relative;}
+.skValidForm .tipsStyle1 textarea {width: 320px;height:100px;resize: none;color: #c2c2c2;border-radius: 6px;border: 1px solid #e6e6e6;padding: 8px;}
+.skValidForm .tipsStyle1 input {width: 320px;height:46px;line-height:20px;border-radius: 6px;border: 1px solid #e6e6e6;outline:none;font-style: normal;color: #c2c2c2;padding: 0px 10px;font-family:"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
+.skValidForm .tipsStyle1 input:focus {box-shadow: inset 0 0 8px #eaeaea;background: #fdfdfd;}
+.skValidForm .tipsStyle1 > p > .error-tip {width: 300px;height:18px;line-height:16px;position: absolute;top: 14px;left: 0px;margin-left: 10px;background: #fff;}
+.skValidForm .tipsStyle1 > p > .error-tip > .error-msg {color:#ff7448;font-size: 14px;vertical-align: middle;}
+.skValidForm .tipsStyle1 > p > .error-tip >.error-ico{width: 14px;display: inline-block;vertical-align: middle;margin-top: 3px;margin-right: 6px;zoom: 1;background: url("./err1.png") no-repeat;}
+.skValidForm .tipsStyle1 > button {width: 320px;height: 44px;line-height: 44px;border-radius: 6px;font-size: 16px;text-align: center;outline:none;color: #fff;background: #06B1F1;border: 1px solid #0cafec;appearance: none;-moz-appearance: none;-webkit-appearance: none;cursor: pointer;margin-top: 20px;font-family:"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
+.skValidForm .tipsStyle1 > button > img{position: relative; top: -38px; left: 260px;display: none;}
+.skValidForm .tipsStyle1 > button:hover {color: #fff;background: #1cbdf9;border: 1px solid #1cbdf9;}
+/* .tipsStyle1  other */
+.skValidForm .tipsStyle1 input {margin-bottom: 10px;}
+.skValidForm .tipsStyle1 p.logo {text-align: center;margin-bottom: 38px;margin-top: 20px}
+.skValidForm .tipsStyle1 h3 {font-size: 20px;}
+.skValidForm .tipsStyle1 p.desc {text-align: center;font-size: 12px;color: #8d8d8d;margin: 10px 0 20px 0;}
+</style>
+
+<div class="skValidForm" >
+	<div class='tipsStyle1'>
+		<p class='logo'><img id="logo-img" src="./logo.png" /></p>
+		<h3>知识改变命运、分享只是改变你我！</h3>
+		<p class='desc'>Knowledge Change Destiny</p>
+		
+		<p><input type="text" class='account' placeholder="帐号" /></p>
+		<p><input type="text" class='pwd' placeholder="密码"/></p>
+		<p><input type="text" class='pwd2' placeholder="确定密码"/></p>
+		<p><textarea class='content'  placeholder="请在这里输入您的意见。"></textarea></p>
+		<button>立即登录<img class="loading" src="./loading.gif"></button>
+	</div>
+</div>
+		
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="./SkValidForm.js"></script>
+<script>
+
+//SK火狐控制台格式化打印对象
+//$.skTools.print(obj);
+
+$('.skValidForm .tipsStyle1 button').click(function(){
+	
+	 $('.skValidForm').skValidForm
+	 ({
+		config : {
+			"isClear": 1,				//[公共配置]是否自动清空value值,1:是0:否
+			"isFocus": 1,				//[公共配置]是否自动获取焦点,1:是0:否
+			"isShowRight": 1,			//[公共配置]是否标志匹配成功,1:是0:否
+			"tipsmsgFadeTime": 800,		//[公共配置]表单提示消失时间（s）
+			"tipsStyle1Time": 3,		//[样式一]震动时间长（短循环长度）
+			"tipsStyle1Wh": 10,			//[样式一]震动幅度（px）
+			"tipsStyle1Style1Fx": 40,	//[样式一]动画速度（s）
+		},
+		tipsStyle:'tipsStyle1',
+	 	ruleType:{
+	 		"test": '/^\w+$/i',	//只能包含字符、数字和下划线（不区分大小写）
+	 	},
+	 	ruleAdd:([
+	 		{node:".account", ruleType:"account",errmsg:"字母开头，5-16字符，字母数字下划线",ajaxPost:0,ajaxUrl:"http://localhost/php同步验证.php",ajaxData:{username:'user1'}},
+	 		{node:".pwd", ruleType:"pwd",errmsg:"字母开头6~18之间(字符、数字和下划线)"},
+	 		{node:".pwd2",node2:".pwd", ruleType:"isEq",errmsg:"两次输入的密码不一致"},
+	 		{node:".content", ruleType:"isEmpty",errmsg:"内容不为空"},
+	 	]),
+	 	beforeSubmit:function(form){
+	 		$.skTools.show('.skValidForm button img');	//（提交前）
+	 		alert('提交');
+	 		return false;
+ 			//$.skTools.hide('.skValidForm button img'); （提交成功/失败后执行）
+	 	}
+	 });
+	
+});
+</script>
