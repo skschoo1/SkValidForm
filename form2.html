@@ -1,0 +1,96 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+	<title>SkValidForm表单验证插件 - Powered by SK TEAM!</title>
+	<meta name="Keywords" content="SkValidForm,表单验证,jq表单验证,表单验证插件,Jquery表单验证插件" />
+	<meta name="description" content="前端验证搞不定、那是认识校长之前的事了，SK From Validation在手、美女我有，麻麻再也不用担心表单验证啦！" />
+</head>
+
+<style>
+/* init */
+*{padding: 0;margin: 0;}
+html,body{width: 100%;background: #f9f9f9;font-family:"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
+input {margin-bottom: 20px;}
+button {width: 60px;height: 34px;line-height: 34px;cursor: pointer;font-size: 16px;outline:none;}
+
+
+/* skValidForm-core-style */
+#skValidForm .right2{ color:red; padding-left:20px; white-space:nowrap; background:url(./right2.png) no-repeat left center;}
+#skValidForm .err2{ color:red; padding-left:20px; white-space:nowrap; background:url(./err2.png) no-repeat left center;}
+</style>
+
+<div id='skValidForm' >		
+	 <p>
+	     <label class="label">帐号：</label>
+	     <input type="text" class="_account">
+	 </p>
+	 <p>
+	     <label class="label">密码：</label>
+	     <input type="text" class="_pwd">
+	
+	 <p>
+	     <label class="label">确认密码：</label>
+	     <input type="text" class="_pwd2">
+	 </p>
+	 <p>
+	     <label class="label">所在城市：</label>
+	     <select name="province" class="_province">
+	     	<option value="">请选择城市</option>
+	     	<option value="1">北京</option>
+	     	<option value="2">上海</option>
+	     	<option value="3">南京</option>
+	     </select>
+	 </p>
+	 <p>
+	 	<label class="_label">性别：</label>
+	     <input type="radio" class='_gender' value="1" id="male" >
+	     <label for="male">男</label> 
+	     <input type="radio" class='_gender' value="2" id="female" >
+	     <label for="female">女</label>
+	 </p>
+	 <p>
+	     <label class="_label">互联网：</label>
+	     <input type="checkbox" class='_it' name="it[]" value="1" id='it1'><label for="it1">SK</label>
+	     <input type="checkbox" class='_it' name="it[]" value="2" id='it2'><label for="it2">百度</label>
+	     <input type="checkbox" class='_it' name="it[]" value="3" id='it3'><label for="it3">阿里</label>
+	     <input type="checkbox" class='_it' name="it[]" value="4" id='it4'><label for="it4">淘宝</label>
+	</p> 
+	<button>提交</button>
+</div>
+		
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="./SkValidForm.min.js"></script>
+<script>
+
+//SK火狐控制台格式化打印对象
+//$.skTools.print(obj);
+
+$('#skValidForm button').click(function(){
+	$.skValidForm
+	({
+		config : {
+			"isClear": 1,				//[公共配置]是否自动清空value值,1:是0:否
+			"isFocus": 1,				//[公共配置]是否自动获取焦点,1:是0:否
+			"isShowRight": 1,			//[公共配置]是否标志匹配成功,1:是0:否
+			"tipsmsgFadeTime": 800,		//[公共配置]表单提示消失时间（s）
+		},
+		tipsStyle:'tipsStyle2',
+	 	ruleType:{
+	 		"test": /^\d{4,10}$/i,	//自定义匹配规则
+	 	},
+	 	ruleAdd:([
+	 		{node:"._account", ruleType:"account",errmsg:"字母开头，6-16字符，字母数字下划线",ajaxPost:0,ajaxUrl:"http://localhost/php同步验证.php",ajaxData:{username:'user1'}},
+	 		{node:"._pwd", ruleType:"pwd",errmsg:"字母开头6~18之间(字符、数字和下划线)"},
+	 		{node:"._pwd2",node2:"._pwd", ruleType:"isEq",errmsg:"两次输入的密码不一致"},
+	 		{node:"._province", ruleType:"select",errmsg:"请选择所在城市"},
+	 		{node:"._gender", ruleType:"radio",errmsg:"请选择性别"},
+	 		{node:"._it", ruleType:"checkbox",errmsg:"请选择互联网"},
+	 	]),
+	 	beforeSubmit:function(configs){
+
+	 		$.skTools.style2Error('._account','error',configs);
+	 		return false;
+	 	}
+	 });
+});
+</script>

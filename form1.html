@@ -1,0 +1,124 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+	<title>SkValidForm表单验证插件 - Powered by SK TEAM!</title>
+	<meta name="Keywords" content="SkValidForm,表单验证,jq表单验证,表单验证插件,Jquery表单验证插件" />
+	<meta name="description" content="前端验证搞不定、那是认识校长之前的事了，SK From Validation在手、美女我有，麻麻再也不用担心表单验证啦！" />
+</head>
+<style>
+/* init */
+*{padding: 0;margin: 0;}
+html,body{width: 100%;background: #f9f9f9;font-family:"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
+#sk-desc {width: 320px; text-align: center;margin: auto;}
+#skValidForm {width: 320px; text-align: left;margin: auto;}
+
+
+/* sk-desc */
+input {margin-bottom: 10px;}
+#sk-desc p.logo {margin-bottom: 38px;margin-top: 20px}
+#sk-desc h3 {font-size: 20px;}
+#sk-desc p.desc {font-size: 12px;color: #8d8d8d;margin: 10px 0 20px 0;}
+
+
+/* skValidForm-core-style */
+#skValidForm p {position: relative;}
+#skValidForm input {width: 320px;height:46px;line-height:20px;border-radius: 6px;border: 1px solid #e6e6e6;outline:none;font-style: normal;color: #c2c2c2;padding: 0px 10px;font-family:"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
+#skValidForm input:focus {box-shadow: inset 0 0 8px #eaeaea;background: #fdfdfd;}
+#skValidForm textarea {width: 320px;height:100px;resize: none;color: #c2c2c2;border-radius: 6px;border: 1px solid #e6e6e6;padding: 8px;}
+#skValidForm p .sk-error-tip {width: 300px;height:18px;line-height:16px;position: absolute;top: 14px;left: 0px;margin-left: 10px;background: #fff;}
+#skValidForm p .sk-error-tip .error-msg {color:#ff7448;font-size: 14px;vertical-align: middle;}
+#skValidForm p .sk-error-tip .error-ico{width: 14px;display: inline-block;vertical-align: middle;margin-top: 3px;margin-right: 6px;zoom: 1;background: url("./err1.png") no-repeat;}
+#skValidForm button {width: 320px;position: relative;height: 44px;line-height: 44px;border-radius: 6px;font-size: 16px;text-align: center;outline:none;color: #fff;background: #06B1F1;border: 1px solid #0cafec;appearance: none;-moz-appearance: none;-webkit-appearance: none;cursor: pointer;margin-top: 20px;font-family:"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
+#skValidForm button > img{ position: absolute;top: 6px; right: 10px;display: none;}
+#skValidForm button:hover {color: #fff;background: #1cbdf9;border: 1px solid #1cbdf9;}
+</style>
+
+
+<div id='sk-desc'>
+	<p class='logo'><img id="logo-img" src="./logo.png" /></p>
+	<h3>知识改变命运、分享只是改变你我！</h3>
+	<p class='desc'>Knowledge Change Destiny</p>
+</div>
+
+
+<div id='skValidForm'>
+	<p><input type="text" class='account' placeholder="帐号" /></p>
+	<p><input type="text" class='pwd' placeholder="密码" /></p>
+	<p><input type="text" class='pwd_confirm' placeholder="确定密码" /></p>
+	<p><input type="text" class='sk_test' placeholder="自定义匹配规则" /></p>
+	<p><textarea class='content' ></textarea></p>
+	<button><span>立即登录</span><img class="loading" src="./loading.gif"></button>
+</div>
+
+
+		
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="./SkValidForm.min.js"></script>
+<script>
+//SK火狐控制台格式化打印对象
+//$.skTools.print(obj);
+
+
+$('#skValidForm button').click(function(){
+	 $.skValidForm
+	 ({
+		config : {
+			"isClear": 1,				//[公共配置]是否自动清空value值,1:是0:否
+			"isFocus": 1,				//[公共配置]是否自动获取焦点,1:是0:否
+			"isShowRight": 0,			//[公共配置]是否标志匹配成功,1:是0:否
+			"tipsmsgFadeTime": 800,		//[公共配置]表单提示消失时间（s）
+			"tipsStyle1Time": 3,		//[样式一]震动时间长（短循环长度）
+			"tipsStyle1Wh": 10,			//[样式一]震动幅度（px）
+			"tipsStyle1Style1Fx": 40,	//[样式一]动画速度（s）
+		},
+		tipsStyle:'tipsStyle1',
+	 	ruleType:{
+	 		"test": /^\d{4,10}$/i,	//自定义匹配规则
+	 	},
+	 	ruleAdd:([
+			{node:".account", ruleType:"account",errmsg:"字母开头，6-16字符，字母数字下划线",ajaxPost:0,ajaxUrl:"http://localhost/php同步验证.php",ajaxData:{username:'user1'}},
+			{node:".pwd", ruleType:"pwd",errmsg:"字母开头6~18之间(字符、数字和下划线)"},
+	 		{node:".pwd_confirm",node2:".pwd", ruleType:"isEq",errmsg:"两次输入的密码不一致"},
+	 		{node:".sk_test", ruleType:"test",errmsg:"自定义匹配规则"},
+	 		{node:".content", ruleType:"isEmpty",errmsg:"内容不为空"},
+		]),
+	 	beforeSubmit:function(configs){
+
+	 		sk_disabled_btn(); //禁用提交表单
+	 		
+	 		return false;
+	 		
+	 		var formdata = $("form").serialize();
+	 		$.post("/login.html",formdata,function(data){
+	 			if(data.status == 1){
+	 				window.location.href = data.url;
+	 			}else{
+	 				if(data.other == 1)
+ 					{
+ 						sk_used_btn();
+				 		$.skTools.style1Error('#login_username',data.msg,configs);
+ 					}else{
+ 						sk_used_btn();
+				 		$.skTools.style1Error('#login_password',data.msg,configs);
+ 					}
+	 			}
+	 		},'json');
+	 	}
+	 });
+});
+
+
+function sk_disabled_btn(){
+	$('#skValidForm button').attr('disabled', true);
+	$('#skValidForm button').css('cursor','default');
+	$('#skValidForm button span').html('登录中...');
+	$('#skValidForm button img').show();
+}
+
+function sk_used_btn(){
+	$('#skValidForm button').attr('disabled', false);
+	$('#skValidForm button').css('cursor','pointer');
+	$('#skValidForm button span').html('立即登录');
+	$('#skValidForm button img').hide();
+}
+</script>
